@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>WebSocket Client Test</title>
+        <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+    </head>
+    <body>
+        <h1>WebSocket Client Test</h1>
+        
+        <label for="commandInput">Enter Command:</label>
+        <input type="text" id="commandInput" placeholder="Enter your command here">
+        
+        <button onclick="sendCommand()">Send Command</button>
+        <div id="status"></div>
+
+        <script>
+        // Substitua pelo IP ou domínio do seu servidor WebSocket
+        const socket = io("ws://192.168.100.4:3000"); // Altere a URL se necessário
+  
+        socket.on("connect", () => {
+            console.log('Conectado ao WebSocket!');
+            document.getElementById('status').innerText = 'Conectado ao WebSocket!';
+        });
+
+        socket.on("disconnect", () => {
+            console.log('Conexão com WebSocket fechada.');
+            document.getElementById('status').innerText = 'Conexão fechada.';
+        });
+
+        socket.on("web-result", (data) => {
+            console.log("Received message from server:", data);
+            document.getElementById("status").innerText = `Server Response: ${data}`;
+        });
+
+        // socket.on("arduinoCommand", (data) => {
+        //     console.log("Received arduinoCommand from server:", data);
+        //     document.getElementById("status").innerText = `Server Response: ${data}`;
+        // });
+
+        // Função para enviar o comando inserido no input
+        function sendCommand() {
+            const command = document.getElementById('commandInput').value;  // Pega o valor do input
+            if (command) {
+                console.log('Enviando comando:', command);
+                socket.emit("command", { message: command });  // Envia o comando
+                document.getElementById('commandInput').value = '';  // Limpa o campo após enviar
+            } else {
+                alert("Please enter a command before sending!");
+            }
+        }
+    </script>
+    </body>
+</html>
