@@ -36,12 +36,16 @@ export class ArduinoGateway implements OnGatewayInit, OnGatewayConnection, OnGat
       const fingerprintInfo = extractFingerprintInfo(payload.response); 
       this.eventEmitter.emit('fingerprint_info', fingerprintInfo);
     }
+    if (payload.response.includes('Digital apagada com sucesso')) {
+      this.eventEmitter.emit('fingerprint_deleted', {});
+    }
     if (payload.response.includes('Digital não encontrada')) {
       this.eventEmitter.emit('fingerprint_not_found', {});
     }
     if (payload.response.includes('Erro')) {
       this.eventEmitter.emit('erro_fingerprint_register', {});
       this.eventEmitter.emit('erro_fingerprint', {});
+      
     }
     if (payload.response.includes('Erro')) {
       this.eventEmitter.emit('erro_fingerprint_register', {});

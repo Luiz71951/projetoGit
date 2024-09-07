@@ -1,4 +1,4 @@
-import { Controller, Delete } from "@nestjs/common";
+import { Controller, Delete, Patch } from "@nestjs/common";
 import { ArduinoGateway } from "./arduino.gateway";
 
 @Controller('sensor')
@@ -14,4 +14,11 @@ export class SensoreController {
           }, 2000);
        
     }
+    @Patch('reset')
+    resetCommand() {
+        this.arduinoGateway.sendToArduino("666");
+       
+    }
+
+
 }

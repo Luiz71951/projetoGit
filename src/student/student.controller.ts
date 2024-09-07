@@ -30,6 +30,12 @@ export class StudentsController {
   ): Promise<Student> {
     return this.studentsService.update(id, updateStudentDto);
   }
+  @Put('fingerprint/:id')
+  async updateFingerPrint(
+    @Param('id') id: string,
+  ): Promise<string> {
+    return this.studentsService.updateFingerprint(id);
+  }
 
   @Delete(':id')
   async remove(@Param('id') id: string): Promise<void> {

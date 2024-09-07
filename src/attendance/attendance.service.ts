@@ -37,21 +37,29 @@ export class AttendanceService {
     return new Promise((resolve, reject) => {
       this.arduinoGateway.sendToArduino('2');
 
+      // Inicia o setTimeout
+      const timeout = setTimeout(() => {
+        reject(new BadRequestException('Fingerprint registration timed out'));
+        this.arduinoGateway.sendToArduino("666");
+      }, 15000);
+
+      // Quando fingerprint_info é emitido, resolvemos e limpamos o timeout
       this.eventEmitter.once('fingerprint_info', (fingerPrintInfo: { position: number, confidence: number }) => {
+        clearTimeout(timeout); // Limpa o timeout antes de resolver
         resolve(fingerPrintInfo);
       });
 
+      // Quando fingerprint_not_found é emitido, rejeitamos e limpamos o timeout
       this.eventEmitter.once('fingerprint_not_found', () => {
+        clearTimeout(timeout); // Limpa o timeout antes de rejeitar
         reject(new BadRequestException('Digital não encontrada!'));
       });
 
+      // Quando erro_fingerprint é emitido, rejeitamos e limpamos o timeout
       this.eventEmitter.once('erro_fingerprint', () => {
+        clearTimeout(timeout); // Limpa o timeout antes de rejeitar
         reject(new BadRequestException('Ocorreu um erro interno. Por favor, tente novamente!'));
       });
-
-      setTimeout(() => {
-        reject(new BadRequestException('Fingerprint registration timed out'));
-      }, 15000);
     });
   }
 
